@@ -1,0 +1,51 @@
+body{
+	min-height: 500px;
+	min-width: 900px;
+	display: flex;
+	
+
+	background-color: #325A6C;
+	flex-direction: column;
+
+
+}
+.content_index{
+	margin: auto;
+	justify-content: space-around;
+
+}
+.img_register_login{
+	display: flex;
+	justify-content: center;
+}
+.register_login{
+min-width: 900px;
+display: flex;
+justify-content: center;	
+
+
+
+}
+
+.button_index{
+	width: 100px;
+	padding: 10px;
+	margin: 10px;
+	border: 1px solid transparent;
+	border-radius: 5px;
+	color: white;
+	 -webkit-transition-duration: 0.4s; 
+    transition-duration: 0.4s;
+	
+
+
+}
+.button_index:hover {
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+}
+#register{
+	background-color: #273B45;
+}
+#login{
+	background-color: #21222E;
+}
