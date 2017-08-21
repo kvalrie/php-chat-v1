@@ -2,70 +2,82 @@
 require 'bdd.php';
 session_start();
 
-if (isset($_POST['register']) AND $_POST['mdp'] == $_POST['comfirm']) {
-//Session qui vont etre utilisée dans ma page minichat.
-	$_SESSION['fullname'] = $_POST['fullname'];
-	$_SESSION['email'] = $_POST['email'];
-	$_SESSION['pseudo'] = $_POST['pseudo'];
+if (isset($_POST['register'])) {
+//sanitisation en tableau .
+	if ($_POST['mdp'] == $_POST['comfirm']) {
+		# code...
+		
+			$fullname = filter_var($_POST['fullname'], FILTER_SANITIZE_STRING);
+			$pseudo = filter_var($_POST['pseudo'], FILTER_SANITIZE_STRING);
+			$email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);	
+		//check docu hash 
+			$mdp = ($_POST['mdp']);
+			
+			$_SESSION['fullname'] = $fullname;
+			$_SESSION['email'] = $email;
+			$_SESSION['pseudo'] = $pseudo;
 
-//protection contre toute injections sql avec escape_string .(voir doc) edit : pas en PDO ()
 
-	$fullname = ($_POST['fullname']);
-	$pseudo = ($_POST['pseudo']);
-	$email = ($_POST['email']);
-//check docu hash 
-	$mdp =($_POST['mdp']);
-//je check si l'email est deja dans ma base de donée 
-	
+		//protection contre toute injections sql avec escape_string .(voir doc) edit : pas en PDO ()
 
-	$resultat= $bdd->query("SELECT * FROM users WHERE email='$email'");
-	$resultat_fetched= $resultat->fetch(PDO::FETCH_ASSOC);
-		if ( $resultat_fetched) {
-		    
-		    $_SESSION['message'] = 'cet utilisateur est deja enregistré veuillez vous connectez';
-		    
-		    header("location: error.php");
-		    
-
-		    
-		}else{
-
-			$ajout_user='INSERT INTO users(pseudo, mdp, fullname, email, date_registration ) VALUES(?, ?, ?, ?, CURDATE())';
-
-			if ($req = $bdd->prepare($ajout_user)) {
-				
-				$req->execute(array($_POST['pseudo'], $_POST['mdp'], $_POST['fullname'], $_POST['email']));
-				$req->closeCursor();
-					header("location:minichat.php");
-			}
+		//je check si l'email est deja dans ma base de donée 
 			
 
-       
-		        //$_SESSION['logged_in'] = 1; // utilisateur co =1 deco !=1
-		      	//$_SESSION['message'] = "success!";
+			$resultat= $bdd->query("SELECT * FROM users WHERE email='$email'");
+			$resultat_fetched= $resultat->fetch(PDO::FETCH_ASSOC);
+				if ( $resultat_fetched) {
+				    
+				    $_SESSION['message'] = 'cet utilisateur est deja enregistré veuillez vous connectez';
+				    
+				    header("location: error.php");
+				    
 
-		      
+				    
+				}else{
+
+					$ajout_user='INSERT INTO users(pseudo, mdp, fullname, email, date_registration ) VALUES(?, ?, ?, ?, CURDATE())';
+
+					if ($req = $bdd->prepare($ajout_user)) {
+						
+						$req->execute(array($pseudo, $_POST['mdp'], $fullname, $email));
+						$req->closeCursor();
+
+			
+							header("location:minichat.php");
+					}else {
+					        $_SESSION['message'] = 'erreur!';
+					        header("location: error.php");
+					    }
+		    
+				}
+					
+
+		       
+				        //$_SESSION['logged_in'] = 1; // utilisateur co =1 deco !=1
+				      	//$_SESSION['message'] = "success!";
+
+				      
+
+
+
+
+					
+					
+
+
+
+
 
 
 
 
 			
-			else {
-			        $_SESSION['message'] = 'erreur!';
-			        header("location: error.php");
-			    }
-    
-		}
 
 
-
-
-
-
-
-
-	
-
+	}else {
+	$_SESSION['message']='veuillez rentrer des mots de passe identique';
+	header("location: error.php");
+	}
 
 }
 
@@ -75,6 +87,7 @@ if (isset($_POST['register']) AND $_POST['mdp'] == $_POST['comfirm']) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
 	<meta charset="UTF-8">
 	<title>Registration</title>
 </head>
